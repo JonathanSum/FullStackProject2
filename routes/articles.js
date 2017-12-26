@@ -20,7 +20,10 @@ router.get('/add',ensureAuthenticated, function(req, res) {
 //Load Edit Form
 router.get('/edit/:id',ensureAuthenticated, function(req, res) {
   Article.findById(req.params.id, function(err, article) {
-    res.render('edit_article', {
+    if(article.author !=req.user._id){
+      req.flash('danger', 'Not Authorized')
+      res.redirect('/')
+    } res.render('edit_article', {
       title: "Edit Article",
       article: article
     });
@@ -50,17 +53,24 @@ router.post('/edit/:id', function(req, res) {
 
 //Delete Article
 router.delete('/:id', function(req, res) {
+  if(!req.user._id){
+    res.send(500).send();
+  }
   let query = {
     _id: req.params.id
   }
+  Article.findById(req.params.id,function(err,article){
+    if(article.author!= req.user._id){
+      res.send(500).send();
+    }else{
+      Article.remove(query, function(err) {
+        if (err) {
+          console.log(err);
+        }
+        res.send('Success')
+})}
+})
 
-  Article.remove(query, function(err) {
-    if (err) {
-      console.log(err);
-    }
-    res.send('Success')
-
-  })
 })
 
 
