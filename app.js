@@ -107,6 +107,14 @@ app.get('/', function(req, res) {
     }
   })
 })
+//contact
+app.get('/contact',function(req,res){
+  res.render('contact',)
+})
+
+
+
+
 
 //Route Files
 let articles = require('./routes/articles');
